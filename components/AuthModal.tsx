@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import Logo from '@/public/W-Letter-Logo-with-faiding-lines.svg';
+import Logo from '@/public/calendar.png';
 import { signIn } from '@/lib/auth';
 import { GitAuthButton, GoogleAuthButton } from './SubmitButtons';
 

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import Logo from '@/public/W-Letter-Logo-with-faiding-lines.svg';
+import Logo from '@/public/calendar.png';
 import { DashboardLinks } from '@/components/DashboardLinks';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,24 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { signOut } from '@/lib/auth';
 import { requireUser } from '@/lib/hook';
+import { prisma } from '@/lib/prisma';
+import { redirect } from 'next/navigation';
+
+async function getData(userId: string) {
+  const data = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      userName: true,
+    },
+  });
+
+  if (!data?.userName) {
+    return redirect('/onboarding');
+  }
+  return data;
+}
 
 export default async function DashboardLayout({
   children,
@@ -23,6 +41,9 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await requireUser();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const data = await getData(session.user?.id as string);
   return (
     <>
       <div className="min-h-screen w-full grid md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -32,7 +53,8 @@ export default async function DashboardLayout({
               <Link href="/" className="flex items-center gap-2">
                 <Image src={Logo} className="size-10" alt="logo" />
                 <p className="text-xl font-bold">
-                  <span className="text-primary">Dashboard</span>
+                  <span className="text-primary">Booking </span>
+                  <span className="text-orange-600">App</span>
                 </p>
               </Link>
             </div>
