@@ -35,7 +35,7 @@ export function SubmitButton({ text, variant, className }: iAppProps) {
         <Button
           type="submit"
           variant={variant}
-          className={cn(className, 'w-full')}
+          className={cn(className, 'w-fit')}
         >
           {text}
         </Button>

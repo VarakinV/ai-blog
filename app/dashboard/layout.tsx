@@ -18,6 +18,7 @@ import { signOut } from '@/lib/auth';
 import { requireUser } from '@/lib/hook';
 import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { Toaster } from '@/components/ui/sonner';
 
 async function getData(userId: string) {
   const data = await prisma.user.findUnique({
@@ -133,6 +134,7 @@ export default async function DashboardLayout({
           </main>
         </div>
       </div>
+      <Toaster richColors closeButton />
     </>
   );
 }

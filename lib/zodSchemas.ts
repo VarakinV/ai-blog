@@ -37,3 +37,8 @@ export function onboardingSchemaValidation(options?: {
         fullName: z.string().min(3, {message: "Full name is minimum 3 characters"}).max(150, {message: "Full name must be less than 150 characters"}),
     })
 }
+
+export const settingsSchema = z.object({
+    fullName: z.string().min(3, {message: "Full name is minimum 3 characters"}).max(150, {message: "Full name must be less than 150 characters"}),
+    profileImage: z.string(),
+})
