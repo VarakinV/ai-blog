@@ -1,7 +1,10 @@
+import { updateAvailabilityAction } from '@/app/actions';
+import { SubmitButton } from '@/components/SubmitButtons';
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
@@ -24,6 +27,9 @@ async function getAvailability(userId: string) {
     where: {
       userId: userId,
     },
+    orderBy: {
+      orderBy: 'asc',
+    },
   });
   if (!availability) {
     return notFound();
@@ -42,18 +48,22 @@ export default async function AvailabilityPage() {
           Set your availability to let people know when you are busy.
         </CardDescription>
       </CardHeader>
-      <form>
+      <form action={updateAvailabilityAction}>
         <CardContent className="flex flex-col gap-y-4">
           {data.map((item) => (
             <div
               key={item.id}
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-center gap-4"
             >
+              <input type="hidden" name={`id-${item.id}`} value={item.id} />
               <div className="flex items-center gap-3">
-                <Switch defaultChecked={item.isActive} />
+                <Switch
+                  name={`isActive-${item.id}`}
+                  defaultChecked={item.isActive}
+                />
                 <p>{item.day}</p>
               </div>
-              <Select defaultValue={item.fromTime}>
+              <Select name={`fromTime-${item.id}`} defaultValue={item.fromTime}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="From Time" />
                 </SelectTrigger>
@@ -67,7 +77,7 @@ export default async function AvailabilityPage() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              <Select defaultValue={item.tillTime}>
+              <Select name={`tillTime-${item.id}`} defaultValue={item.tillTime}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Till Time" />
                 </SelectTrigger>
@@ -84,6 +94,9 @@ export default async function AvailabilityPage() {
             </div>
           ))}
         </CardContent>
+        <CardFooter>
+          <SubmitButton text="Save Changes" />
+        </CardFooter>
       </form>
     </Card>
   );

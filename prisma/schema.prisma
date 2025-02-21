@@ -30,6 +30,7 @@ model User {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   availability Availability[]
+  eventType    EventType[]
 }
 
 model Account {
@@ -87,6 +88,7 @@ model Availability {
   fromTime String
   tillTime String
   isActive Boolean @default(true)
+  orderBy  Int?
 
   userId    String?
   User      User?    @relation(fields: [userId], references: [id])
@@ -102,4 +104,20 @@ enum Day {
   Friday
   Saturday
   Sunday
+}
+
+model EventType {
+  id                String  @id @default(cuid())
+  title             String
+  description       String
+  duration          Int
+  url               String
+  active            Boolean @default(true)
+  videoCallSoftware String  @default("Google Meet")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
 }

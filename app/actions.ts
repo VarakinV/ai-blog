@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/hook";
 import { prisma } from "@/lib/prisma";
 import {  onboardingSchemaValidation, settingsSchema } from "@/lib/zodSchemas";
 import {parseWithZod} from '@conform-to/zod'
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function OnboardingAction(prevState: unknown, formData: FormData) {
@@ -106,4 +107,39 @@ export async function SettingsAction(prevState: unknown, formData: FormData) {
     })
 
     return redirect('/dashboard');
+}
+
+export async function updateAvailabilityAction(formData: FormData) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const session = await requireUser();
+
+    const rawData = Object.fromEntries(formData.entries());
+    const availabilityData = Object.keys(rawData).filter((key) => key.startsWith('id-')).map((key) => {
+        const id = key.replace('id-', '');
+        return {
+            id,
+            isActive: rawData[`isActive-${id}`] === 'on',
+            fromTime: rawData[`fromTime-${id}`] as string,
+            tillTime: rawData[`tillTime-${id}`] as string,
+        }
+    });
+
+    try {
+        await prisma.$transaction(
+            availabilityData.map((item) => prisma.availability.update({
+                where: {
+                    id: item.id,
+                },
+                data: {
+                    isActive: item.isActive,
+                    fromTime: item.fromTime,
+                    tillTime: item.tillTime,
+                },
+            }) )
+        )
+        revalidatePath('/dashboard/availability');
+    } catch (error) {
+        console.log(error);
+
+    }
 }
