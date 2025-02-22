@@ -42,3 +42,11 @@ export const settingsSchema = z.object({
     fullName: z.string().min(3, {message: "Full name is minimum 3 characters"}).max(150, {message: "Full name must be less than 150 characters"}),
     profileImage: z.string(),
 })
+
+export const eventTypeSchema = z.object({
+    title: z.string().min(3, {message: "Title is minimum 3 characters"}).max(150, {message: "Title must be less than 150 characters"}),
+    url: z.string().min(3, {message: "URL slug is minimum 3 characters"}).max(150, {message: "URL slug must be less than 150 characters"}),
+    description: z.string().min(3, {message: "Description is minimum 3 characters"}).max(300, {message: "Description must be less than 300 characters"}),
+    duration: z.number().min(15, {message: "Duration is minimum 15 minutes"}).max(60, {message: "Duration must be less than 60 minutes"}),
+    videoCallSoftware: z.string().min(3, {message: "Video call provider is required"}),
+})
