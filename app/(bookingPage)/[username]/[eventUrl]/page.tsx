@@ -1,3 +1,4 @@
+import { RenderCalendar } from '@/components/bookingForm/RenderCalendar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { prisma } from '@/lib/prisma';
@@ -39,14 +40,32 @@ async function getData(eventUrl: string, userName: string) {
   return data;
 }
 
+// interface BookingPageProps {
+//   params: { username: string; eventUrl: string };
+//   searchParams: { date?: string };
+// }
+
 export default async function BookingPage({
   params,
-}: {
-  params: Promise<{ username: string; eventUrl: string }>;
-}) {
-  const resolvedParams = await params; // Await params before accessing properties
+  searchParams,
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+any) {
+  const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams; // Wait for searchParams to resolve
+
+  const selectedDate = resolvedSearchParams?.date
+    ? new Date(`${resolvedSearchParams.date}T00:00:00.000Z`)
+    : new Date();
 
   const data = await getData(resolvedParams.eventUrl, resolvedParams.username);
+
+  // Force the date to be treated as UTC and format it correctly
+  const formattedDate = selectedDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC', // Ensures no local timezone shift
+  });
   return (
     <div className="min-h-screen w-screen flex items-center justify-center">
       <Card className="w-full max-w-[1000px] p-5 mx-auto">
@@ -69,7 +88,7 @@ export default async function BookingPage({
               <p className="flex items-center">
                 <CalendarX2 className="size-4 mr-2 text-primary " />
                 <span className="text-sm font-md text-muted-foreground">
-                  23 Sep 2024
+                  {formattedDate}
                 </span>
               </p>
               <p className="flex items-center">
@@ -87,6 +106,8 @@ export default async function BookingPage({
             </div>
           </div>
           <Separator orientation="vertical" className="h-full w-[1px]" />
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <RenderCalendar availability={data.User?.availability as any} />
         </CardContent>
       </Card>
     </div>
