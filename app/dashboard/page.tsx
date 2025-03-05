@@ -1,4 +1,6 @@
+import { CopyLinkMenuItem } from '@/components/CopyLinkMenu';
 import { EmptyState } from '@/components/EmptyState';
+import { EventToggle } from '@/components/EventToggle';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,10 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Switch } from '@/components/ui/switch';
 import { requireUser } from '@/lib/hook';
 import { prisma } from '@/lib/prisma';
-import { ExternalLink, Link2, Pen, Settings, Trash, User2 } from 'lucide-react';
+import { ExternalLink, Pen, Settings, Trash, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -95,19 +96,22 @@ export default async function DashboardPage() {
                             Preview
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Link2 className="mr-2 size-4" />
-                          Copy
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Pen className="mr-2 size-4" />
-                          Edit
+                        <CopyLinkMenuItem
+                          meetingUrl={`${process.env.NEXT_PUBLIC_URL}/${data.userName}/${item.url}`}
+                        />
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/event/${item.id}`}>
+                            <Pen className="mr-2 size-4" />
+                            Edit
+                          </Link>
                         </DropdownMenuItem>
                       </DropdownMenuGroup>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash className="mr-2 size-4" />
-                        Delete
+                      <DropdownMenuItem asChild>
+                        <Link href={`/dashboard/event/${item.id}/delete`}>
+                          <Trash className="mr-2 size-4" />
+                          Delete
+                        </Link>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -126,8 +130,13 @@ export default async function DashboardPage() {
                   </div>
                 </Link>
                 <div className="bg-muted px-5 py-3 justify-between items-center flex">
-                  <Switch />
-                  <Button>Edit Event</Button>
+                  <EventToggle
+                    initialChecked={item.active}
+                    eventTypeId={item.id}
+                  />
+                  <Button asChild>
+                    <Link href={`/dashboard/event/${item.id}`}>Edit Event</Link>
+                  </Button>
                 </div>
               </div>
             ))}

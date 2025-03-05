@@ -199,11 +199,11 @@ export async function CreateMeetingAction(formData: FormData) {
 
     const fromTime = formData.get('fromTime') as string;
     const eventDate = formData.get('eventDate') as string;
-    const metingLength = Number(formData.get('meetingLength'));
+    const meetingLength = Number(formData.get('meetingLength'));
     const provider = formData.get('provider') as string;
 
     const startDateTime= new Date(`${eventDate}T${fromTime}:00`);
-    const endDateTime = new Date(startDateTime.getTime() + metingLength * 60000);
+    const endDateTime = new Date(startDateTime.getTime() + meetingLength * 60000);
 
     await nylas.events.create({
         identifier: getUserData.grantId as string,
@@ -234,4 +234,108 @@ export async function CreateMeetingAction(formData: FormData) {
 
     return redirect('/success');
 
+}
+
+export async function CancelMeetingAction(formData: FormData) {
+    const session = await requireUser();
+
+    const userData = await prisma.user.findUnique({
+        where: {
+            id: session.user?.id
+        },
+        select: {
+            grantId: true,
+            grantEmail: true,
+        }
+    })
+
+    if(!userData) {
+        throw new Error('User not found');
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const data = await nylas.events.destroy({
+        eventId: formData.get('eventId') as string,
+        identifier: userData.grantId as string,
+        queryParams: {
+            calendarId: userData.grantEmail as string,
+        },
+    })
+
+    revalidatePath('/dashboard/meetings');
+    
+}
+
+export async function EditEventTypeAction(prevState: unknown, formData: FormData) {
+    const session = await requireUser();
+
+    const submission = parseWithZod(formData, {
+        schema: eventTypeSchema,
+    });
+
+    if(submission.status !== "success") {
+        return submission.reply();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const data = await prisma.eventType.update({
+        where: {
+            id: formData.get('id') as string,
+            userId: session.user?.id
+        },
+        data: {
+            title: submission.value.title,
+            url: submission.value.url,
+            description: submission.value.description,
+            duration: submission.value.duration,
+            videoCallSoftware: submission.value.videoCallSoftware,
+            
+        }
+    })
+
+    return redirect('/dashboard');
+
+}
+
+export async function UpdateEventToggle(prevState: unknown, {eventTypeId, isChecked}: {eventTypeId: string; isChecked: boolean}) {
+    try {
+        const session = await requireUser();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const data = await prisma.eventType.update({
+        where: {
+            id: eventTypeId,
+            userId: session.user?.id
+        },
+        data: {
+            active: isChecked,
+        }
+    });
+
+    revalidatePath('/dashboard');
+
+    return {
+        status: 'success',
+        message: 'Event updated successfully',
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+        return {
+            status: 'error',
+            message: 'Failed to update event',
+        }
+    }
+}
+
+export async function DeleteEventTypeAction(formData: FormData) {
+    const session = await requireUser();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const data = await prisma.eventType.delete({
+        where: {
+            id: formData.get('id') as string,
+            userId: session.user?.id
+        }
+    })
+    return redirect('/dashboard');
 }

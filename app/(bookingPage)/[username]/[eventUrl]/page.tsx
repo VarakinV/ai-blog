@@ -129,7 +129,7 @@ any) {
                 name="eventDate"
                 value={resolvedSearchParams.date}
               />
-              <input type="hidden" name="metingLength" value={data.duration} />
+              <input type="hidden" name="meetingLength" value={data.duration} />
               <input
                 type="hidden"
                 name="provider"
