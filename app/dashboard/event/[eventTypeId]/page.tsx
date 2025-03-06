@@ -30,8 +30,8 @@ export default async function EditEvent({
 }: {
   params: { eventTypeId: string };
 }) {
-  const resolvedParams = await params;
-  const data = await getData(resolvedParams.eventTypeId);
+  const data = await getData(params.eventTypeId);
+
   return (
     <EditEventForm
       callProvider={data.videoCallSoftware}
