@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import Logo from '@/public/calendar.png';
 import { AuthModal } from './AuthModal';
+import { ThemeToggle } from './ThemeToggle';
 
 export function Navbar() {
   return (
@@ -13,7 +14,10 @@ export function Navbar() {
           Booking <span className="text-orange-600">App</span>
         </h1>
       </Link>
-      <AuthModal />
+      <div className="hidden md:flex md:justify-end md:space-x-4">
+        <ThemeToggle />
+        <AuthModal />
+      </div>
     </div>
   );
 }
