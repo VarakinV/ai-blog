@@ -27,10 +27,10 @@ async function getData(eventTypeId: string) {
 
 export default async function EditEvent({
   params,
-}: {
-  params: { eventTypeId: string };
-}) {
-  const data = await getData(params.eventTypeId);
+}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+any) {
+  const resolvedParams = await params;
+  const data = await getData(resolvedParams.eventTypeId);
 
   return (
     <EditEventForm

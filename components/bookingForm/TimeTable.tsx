@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { nylas } from '@/lib/nylas';
 import { prisma } from '@/lib/prisma';
@@ -85,7 +86,7 @@ function calculateAvailableTimeSlots(
     'yyyy-MM-dd HH:mm',
     new Date()
   );
-
+  //@ts-ignore
   const busySlots = nylasData.data[0].timeSlots.map((slot) => ({
     start: fromUnixTime(slot.startTime),
     end: fromUnixTime(slot.endTime),
@@ -94,6 +95,7 @@ function calculateAvailableTimeSlots(
   const allSlots = [];
   let currentSlot = availableFrom;
   while (isBefore(currentSlot, availableTill)) {
+    //@ts-ignore
     allSlots.push(currentSlot);
     currentSlot = addMinutes(currentSlot, duration);
   }

@@ -21,12 +21,12 @@ export function RenderCalendar({ availability }: iAppProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [date, setDate] = useState(() => {
-    const dateParam = searchParams.get('date');
+    const dateParam = searchParams?.get('date');
     return dateParam ? parseDate(dateParam) : today(getLocalTimeZone());
   });
 
   useEffect(() => {
-    const dateParam = searchParams.get('date');
+    const dateParam = searchParams?.get('date');
     if (dateParam) {
       setDate(parseDate(dateParam));
     }
