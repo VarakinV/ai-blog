@@ -75,7 +75,7 @@ export function GitAuthButton() {
       ) : (
         <Button variant="outline" className="w-full">
           <Image src={GitLogo} alt="github logo" className="mr-2 size-4" />
-          Sign in with Google
+          Sign in with GitHub
         </Button>
       )}
     </>
